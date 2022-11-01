@@ -1,26 +1,72 @@
-import { Injectable } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { UpdateCategoryDto } from './dto/update-category.dto';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+
+import { Repository } from 'typeorm';
+import { Category } from './entities/category.entity';
 
 @Injectable()
 export class CategoriesService {
-  create(createCategoryDto: CreateCategoryDto) {
-    return 'This action adds a new category';
+  constructor(
+    @InjectRepository(Category)
+    private readonly categoryRepository: Repository<Category>,
+  ) {}
+
+  private readonly logger = new Logger(CategoriesService.name);
+
+  async create(createCategoryDto: CreateCategoryDto) {
+    try {
+      const category = this.categoryRepository.create(createCategoryDto);
+      await this.categoryRepository.save(category);
+      return category;
+    } catch (error) {
+      this.logger.error(error);
+    }
   }
 
-  findAll() {
-    return `This action returns all categories`;
+  async findAll() {
+    try {
+      return await this.categoryRepository.find();
+    } catch (error) {
+      this.logger.error(error);
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} category`;
+  async findOne(id: string) {
+    try {
+      const category = await this.categoryRepository.findOneBy({ uuid: id });
+      if (!category) throw new NotFoundException('Category not found');
+
+      return category;
+    } catch (error) {
+      this.logger.error(error);
+    }
   }
 
-  update(id: number, updateCategoryDto: UpdateCategoryDto) {
-    return `This action updates a #${id} category`;
+  async update(id: string, updateCategoryDto: UpdateCategoryDto) {
+    try {
+      const category = await this.findOne(id);
+      await this.categoryRepository.update(category.uuid, updateCategoryDto);
+
+      return this.findOne(id);
+    } catch (error) {
+      this.logger.error(error);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} category`;
+  async remove(id: string) {
+    try {
+      const category = await this.findOne(id);
+      await this.categoryRepository.delete(category.uuid);
+
+      return {
+        ok: true,
+        message: 'Category deleted successfully',
+        categoryDeleted: category,
+      };
+    } catch (error) {
+      this.logger.error(error);
+    }
   }
 }
