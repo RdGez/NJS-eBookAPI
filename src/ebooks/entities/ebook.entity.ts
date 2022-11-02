@@ -1,5 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  JoinColumn,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Category } from '../../categories/entities/category.entity';
 
 @Entity('ebooks')
 export class Ebook {
@@ -29,24 +36,38 @@ export class Ebook {
   author: string;
 
   @ApiProperty({
-    example: 'hhtps://example.com/ebook.jpg',
-    description: 'Image of the ebook',
-  })
-  coverUrl?: string;
-
-  @ApiProperty({
     example:
       'The Lord of the Rings is an epic high fantasy novel written by English author and scholar J. R. R. Tolkien.',
     description: 'Description of the ebook',
   })
   @Column('text', {
-    nullable: false,
+    nullable: true,
   })
   description?: string;
+
+  @ApiProperty({
+    example: 'hhtps://example.com/ebook.jpg',
+    description: 'Image of the ebook',
+  })
+  @Column('text', {
+    nullable: true,
+  })
+  coverUrl?: string;
 
   @ApiProperty({
     example: 'it_ebook',
     description: 'Url of the ebook',
   })
+  @Column('text', {
+    nullable: true,
+  })
   slug?: string;
+
+  @ApiProperty({
+    example: 'Category Object',
+    description: 'Category associated with the ebook',
+  })
+  @OneToOne(() => Category, (category) => category.uuid, { eager: true })
+  @JoinColumn()
+  category: string;
 }

@@ -1,26 +1,73 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger, NotFoundException } from '@nestjs/common';
+import { InjectRepository } from '@nestjs/typeorm';
 import { CreateEbookDto } from './dto/create-ebook.dto';
 import { UpdateEbookDto } from './dto/update-ebook.dto';
 
+import { Repository } from 'typeorm';
+import { Ebook } from './entities/ebook.entity';
+
 @Injectable()
 export class EbooksService {
-  create(createEbookDto: CreateEbookDto) {
-    return 'This action adds a new ebook';
+  constructor(
+    @InjectRepository(Ebook)
+    private readonly ebookRepository: Repository<Ebook>,
+  ) {}
+
+  private readonly logger = new Logger('EbooksService');
+
+  async create(createEbookDto: CreateEbookDto) {
+    try {
+      const ebook = this.ebookRepository.create(createEbookDto);
+      await this.ebookRepository.save(ebook);
+      return ebook;
+    } catch (error) {
+      this.logger.error(error);
+    }
   }
 
-  findAll() {
-    return `This action returns all ebooks`;
+  async findAll() {
+    try {
+      const ebooks = await this.ebookRepository.find();
+      return ebooks;
+    } catch (error) {
+      this.logger.error(error);
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} ebook`;
+  async findOne(id: string) {
+    try {
+      const ebook = this.ebookRepository.findOneBy({ uuid: id });
+      if (!ebook) throw new NotFoundException('Ebook not found');
+
+      return ebook;
+    } catch (error) {
+      this.logger.error(error);
+    }
   }
 
-  update(id: number, updateEbookDto: UpdateEbookDto) {
-    return `This action updates a #${id} ebook`;
+  async update(id: string, updateEbookDto: UpdateEbookDto) {
+    try {
+      const ebook = await this.findOne(id);
+      await this.ebookRepository.update(ebook.uuid, updateEbookDto);
+
+      return await this.findOne(id);
+    } catch (error) {
+      this.logger.error(error);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} ebook`;
+  async remove(id: string) {
+    try {
+      const ebook = await this.findOne(id);
+      await this.ebookRepository.remove(ebook);
+
+      return {
+        ok: true,
+        message: 'eBook deleted successfully',
+        deletedEbook: ebook,
+      };
+    } catch (error) {
+      this.logger.error(error);
+    }
   }
 }

@@ -27,16 +27,16 @@ export class EbooksController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.ebooksService.findOne(+id);
+    return this.ebooksService.findOne(id);
   }
 
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateEbookDto: UpdateEbookDto) {
-    return this.ebooksService.update(+id, updateEbookDto);
+    return this.ebooksService.update(id, updateEbookDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.ebooksService.remove(+id);
+    return this.ebooksService.remove(id);
   }
 }
