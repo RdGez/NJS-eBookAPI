@@ -6,6 +6,8 @@ import { ServeStaticModule } from '@nestjs/serve-static';
 
 import { EbooksModule } from './ebooks/ebooks.module';
 import { CategoriesModule } from './categories/categories.module';
+import { AuthModule } from './auth/auth.module';
+import { CommonModule } from './common/common.module';
 
 @Module({
   imports: [
@@ -23,6 +25,8 @@ import { CategoriesModule } from './categories/categories.module';
     ServeStaticModule.forRoot({
       rootPath: join(__dirname, '..', 'public'),
     }),
+    CommonModule,
+    AuthModule,
     EbooksModule,
     CategoriesModule,
   ],

@@ -16,6 +16,8 @@ $ yarn install
 POSTGRES_DB=postgres
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=postgres
+
+JWT_SECRET=secret
 ```
 3. Execute `yarn start:dev` to start the application in development mode.
 ```

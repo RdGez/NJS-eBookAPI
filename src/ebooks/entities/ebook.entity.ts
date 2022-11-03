@@ -1,6 +1,9 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  BeforeInsert,
+  BeforeUpdate,
   Column,
+  CreateDateColumn,
   Entity,
   JoinColumn,
   OneToOne,
@@ -63,6 +66,12 @@ export class Ebook {
   })
   slug?: string;
 
+  @CreateDateColumn({
+    type: 'timestamp',
+    default: () => 'CURRENT_TIMESTAMP(6)',
+  })
+  created_at: Date;
+
   @ApiProperty({
     example: 'Category Object',
     description: 'Category associated with the ebook',
@@ -70,4 +79,18 @@ export class Ebook {
   @OneToOne(() => Category, (category) => category.uuid, { eager: true })
   @JoinColumn()
   category: string;
+
+  @BeforeInsert()
+  @BeforeUpdate()
+  normalizeSlug() {
+    const param = !this.slug ? this.title : this.slug;
+
+    this.slug = param
+      .trim()
+      .normalize('NFD')
+      .replace(/[^\w\s]/gi, '')
+      .replace(/[\u0300-\u036f]/g, '')
+      .replace(/ /g, '_')
+      .toLowerCase();
+  }
 }
