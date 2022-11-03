@@ -53,6 +53,18 @@ export class AuthService {
     }
   }
 
+  renewAuth(user: User) {
+    const { uuid, name, email } = user;
+    if (!user) throw new UnauthorizedException('User dont exist');
+
+    return {
+      uuid,
+      name,
+      email,
+      token: this.makeJwt({ ...user }),
+    };
+  }
+
   private makeJwt(payload: JwtPayload) {
     return this.jwtService.sign(payload);
   }
