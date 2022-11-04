@@ -6,18 +6,33 @@ import {
   Patch,
   Param,
   Delete,
+  UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
+
 import { EbooksService } from './ebooks.service';
 import { CreateEbookDto } from './dto/create-ebook.dto';
 import { UpdateEbookDto } from './dto/update-ebook.dto';
+
+import { FileInterceptor } from '@nestjs/platform-express';
+import { fileFilter } from '../common/helpers/fileFilters';
 
 @Controller('ebooks')
 export class EbooksController {
   constructor(private readonly ebooksService: EbooksService) {}
 
   @Post()
-  create(@Body() createEbookDto: CreateEbookDto) {
-    return this.ebooksService.create(createEbookDto);
+  @UseInterceptors(
+    FileInterceptor('cover', {
+      fileFilter: fileFilter,
+      limits: { fileSize: 1000000 },
+    }),
+  )
+  create(
+    @Body() createEbookDto: CreateEbookDto,
+    @UploadedFile() file?: Express.Multer.File,
+  ) {
+    return this.ebooksService.create(createEbookDto, file);
   }
 
   @Get()

@@ -29,9 +29,8 @@ export class CreateEbookDto {
     example: 'hhtps://example.com/ebook.jpg',
     description: 'Image of the ebook',
   })
-  @IsString()
   @IsOptional()
-  coverUrl?: string;
+  cover?: string;
 
   @ApiProperty({
     example:

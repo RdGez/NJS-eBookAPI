@@ -17,7 +17,10 @@ POSTGRES_DB=postgres
 POSTGRES_USER=postgres
 POSTGRES_PASSWORD=postgres
 
-JWT_SECRET=secret
+JWT_SECRET=secretKeyToSignJWT
+CLOUDINARY_CLOUD_NAME=secretKeysForUseCloudinary
+CLOUDINARY_API_KEY=secretKeysForUseCloudinary
+CLOUDINARY_API_SECRET=secretKeysForUseCloudinary
 ```
 3. Execute `yarn start:dev` to start the application in development mode.
 ```

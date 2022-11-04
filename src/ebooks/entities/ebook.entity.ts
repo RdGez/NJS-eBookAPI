@@ -55,7 +55,7 @@ export class Ebook {
   @Column('text', {
     nullable: true,
   })
-  coverUrl?: string;
+  cover?: string;
 
   @ApiProperty({
     example: 'it_ebook',

@@ -8,6 +8,7 @@ import { EbooksModule } from './ebooks/ebooks.module';
 import { CategoriesModule } from './categories/categories.module';
 import { AuthModule } from './auth/auth.module';
 import { CommonModule } from './common/common.module';
+import { FilesModule } from './files/files.module';
 
 @Module({
   imports: [
@@ -27,6 +28,7 @@ import { CommonModule } from './common/common.module';
     }),
     CommonModule,
     AuthModule,
+    FilesModule,
     EbooksModule,
     CategoriesModule,
   ],
